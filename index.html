@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Chop Compass - Student Meal Planner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #ff7e5f;
+            --primary-dark: #e86a4b;
+            --secondary: #4abdac;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 0.3rem;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .search-container button {
+            background: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .search-container button:hover {
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pantry-section {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .recipes-section {
+            flex: 2;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        /* Pantry Section */
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .input-group button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .input-group button:hover {
+            background: var(--primary-dark);
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .ingredient-tag {
+            background: var(--secondary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .ingredient-tag .remove {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+        }
+
+        .pantry-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .pantry-actions button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .clear-btn {
+            background: #f1f2f6;
+            color: var(--gray);
+        }
+
+        .clear-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .find-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .find-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Filter Section */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        /* Recipe Cards */
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #e2e8f0;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-image {
+            height: 180px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            position: relative;
+        }
+
+        .recipe-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .recipe-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .recipe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .ingredients-preview {
+            margin-bottom: 1.5rem;
+        }
+
+        .ingredients-preview h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .ingredient-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .ingredient-item.have {
+            color: var(--success);
+        }
+
+        .ingredient-item.missing {
+            color: var(--danger);
+            text-decoration: line-through;
+        }
+
+        .view-recipe {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .view-recipe:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Welcome State */
+        .welcome-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .welcome-state i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .welcome-state h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .welcome-state p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .featured-recipes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--gray);
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-container {
+                margin-top: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .filters {
+                flex-direction: column;
+            }
+            
+            .pantry-actions {
+                flex-direction: column;
+            }
+            
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-utensils"></i>
+                    <div>
+                        <h1>Campus Chop Compass</h1>
+                        <div class="tagline">Your ultimate guide to student-friendly meals. Cook smart, eat well!</div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" placeholder="Search for recipes (e.g., jollof, noodles, beans)">
+                    <button><i class="fas fa-search"></i> Search</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Pantry Section -->
+            <section class="pantry-section">
+                <h2 class="section-title"><i class="fas fa-archive"></i> What's in Your Pantry?</h2>
+                
+                <div class="input-group">
+                    <input type="text" id="ingredient-input" placeholder="e.g., Rice, Tomato Paste, Onion, Egg...">
+                    <button id="add-ingredient"><i class="fas fa-plus"></i> Add</button>
+                </div>
+                
+                <div class="ingredients-list" id="ingredients-container">
+                    <!-- Ingredients will be added here dynamically -->
+                </div>
+                
+                <div class="pantry-actions">
+                    <button class="clear-btn" id="clear-pantry"><i class="fas fa-trash-alt"></i> Clear All</button>
+                    <button class="find-btn" id="find-recipes"><i class="fas fa-search"></i> Find Recipes</button>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <h3 class="section-title"><i class="fas fa-lightbulb"></i> Quick Tips</h3>
+                    <ul style="padding-left: 1.5rem; color: var(--gray); line-height: 1.8;">
+                        <li>Add all ingredients you have available</li>
+                        <li>Try different combinations to discover new meals</li>
+                        <li>Use the filters to narrow down your recipe options</li>
+                        <li>Missing 1-2 ingredients? You might still make the recipe!</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Recipes Section -->
+            <section class="recipes-section">
+                <h2 class="section-title"><i class="fas fa-utensil-spoon"></i> Recipe Recommendations</h2>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="match-type">Match Type</label>
+                        <select id="match-type">
+                            <option value="all">All Recipes</option>
+                            <option value="exact">Exact Match</option>
+                            <option value="partial" selected>Partial Match</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="cuisine">Cuisine</label>
+                        <select id="cuisine">
+                            <option value="all">All Cuisines</option>
+                            <option value="ghanaian">Ghanaian</option>
+                            <option value="international">International</option>
+                            <option value="asian">Asian</option>
+                            <option value="western">Western</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="meal-type">Meal Type</label>
+                        <select id="meal-type">
+                            <option value="all">All Meals</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="snack">Snack</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="cooking-time">Cooking Time</label>
+                        <select id="cooking-time">
+                            <option value="all">Any Time</option>
+                            <option value="15">Under 15 min</option>
+                            <option value="30">Under 30 min</option>
+                            <option value="45">Under 45 min</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="recipes-grid" id="recipes-container">
+                    <!-- Recipes will be displayed here -->
+                    <div class="welcome-state">
+                        <i class="fas fa-utensils"></i>
+                        <h2>Ready to cook?</h2>
+                        <p>Add the ingredients you have in your pantry to discover delicious student-friendly recipes tailored just for you!</p>
+                        <p>Start by typing ingredients like "rice", "eggs", or "tomatoes" in the pantry section.</p>
+                        
+                        <div style="margin-top: 2rem;">
+                            <h3>Popular Student Recipes</h3>
+                            <div class="featured-recipes">
+                                <div class="recipe-card">
+                                    <div class="recipe-image" style="background: linear-gradient(45deg, #ff9a9e, #fad0c4);"></div>
+                                    <div class="recipe-content">
+                                        <h3 class="recipe-title">Quick Jollof Rice</h3>
+                                        <div class="recipe-meta">
+                                            <span><i class="fas fa-clock"></i> 30 min</span>
+                                            <span><i class="fas fa-fire"></i> Easy</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="recipe-card">
+                                    <div class="recipe-image" style="background: linear-gradient(45deg, #a1c4fd, #c2e9fb);"></div>
+                                    <div class="recipe-content">
+                                        <h3 class="recipe-title">Indomie Stir-fry</h3>
+                                        <div class="recipe-meta">
+                                            <span><i class="fas fa-clock"></i> 15 min</span>
+                                            <span><i class="fas fa-fire"></i> Very Easy</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="recipe-card">
+                                    <div class="recipe-image" style="background: linear-gradient(45deg, #ffecd2, #fcb69f);"></div>
+                                    <div class="recipe-content">
+                                        <h3 class="recipe-title">Beans & Gari</h3>
+                                        <div class="recipe-meta">
+                                            <span><i class="fas fa-clock"></i> 45 min</span>
+                                            <span><i class="fas fa-fire"></i> Medium</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Campus Chop Compass &copy; 2023 | Helping students cook smart and eat well</p>
+            <p>Over 100 student-friendly recipes for breakfast, lunch, and dinner</p>
+        </div>
+    </footer>
+
+    <script src="food.js"></script>
+</body>
+</html>
